@@ -1,5 +1,6 @@
 import asyncio
 import urllib.parse
+from pprint import pprint
 
 from clients.domclick import DomclickClient
 from datatypes import SearchParameters
@@ -33,7 +34,11 @@ if __name__ == '__main__':
         address='abf4ae61-af59-4b2d-a8d9-fdf9b47c4a5d',
         deal_type='sale',
         category='living',
-        offer_type=['flat', 'layout']
+        offer_type=['flat', 'layout'],
+        price=(None, 4000000),
+        has_separated_bathrooms=True,
+        renovation=('well_done', 'design'),
+        has_lifts=True
     )
 
-    asyncio.run(client.get_all_offers(my_search))
+    pprint(asyncio.run(client.get_all_offers(my_search)))

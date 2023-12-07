@@ -7,7 +7,7 @@ from enums import DealType, Category, OfferType, Renovation
 
 T = TypeVar('T')
 MultipleParametersAllowed: TypeAlias = tuple[T, ...]
-RangeInt: TypeAlias = tuple[int, int]
+RangeInt: TypeAlias = tuple[Optional[int], Optional[int]]
 
 
 def build_gte_lte_dict(prefix: str, name: str, values: tuple[int, int]) -> dict:
@@ -42,10 +42,10 @@ class SearchParameters(BaseModel):
     #  ... there are more parameters I`m not dive into since I ignore them while searching, but list can be expanded
     
     def _proceed(self, k, v) -> dict:
-        if k in ['price_type', ]:
+        if k in ['price_type', 'city', ]:  # TODO can I use some pydantic features here to ignore some fields?
             return {}
 
-        if isinstance(v, tuple) and isinstance(v[0], int):
+        if isinstance(v, tuple) and (isinstance(v[0], int) or isinstance(v[1], int)):
             if k == 'price':
                 return build_gte_lte_dict(self.price_type, k, v)
             else:
@@ -57,11 +57,9 @@ class SearchParameters(BaseModel):
     def q(self):
         output = {}
         for k, v in self.__dict__.items():
-            if not v:
-                continue
             output.update(self._proceed(k, v))
 
-        return output
+        return {k: v for k, v in output.items() if v}
 
 
 class Offer(BaseModel):
