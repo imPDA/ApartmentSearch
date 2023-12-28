@@ -81,13 +81,18 @@ class DomclickInfo(BaseModel):
     timezone_offset: float
 
 
+class DomclickPosition(BaseModel):
+    lat: float
+    lon: float
+
+
 class DomclickAddress(BaseModel):
     id: int
     kind: str
     guid: str
     name: str
     display_name: str
-    position: dict[Literal['lat', 'lon'], float]
+    position: DomclickPosition
     locality: DomclickLocality
     subways: Optional[list] = None
     info: DomclickInfo
