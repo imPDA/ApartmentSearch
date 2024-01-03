@@ -1,10 +1,12 @@
 import json
+from pprint import pprint
 from typing import Optional
 from urllib.parse import urlencode
 
 from pydantic import ValidationError
 
 from datatypes import SearchParameters, DomclickOffer
+from domclick_datatypes import DomclickOffer_v2
 
 from .http import HTTP
 
@@ -67,6 +69,7 @@ class DomclickClient(HTTP):
 
     async def _spawn_urls(self, search_parameters: SearchParameters, *, search_limit: int = 20) -> list[str]:
         OFFERS_ENDPOINT = 'https://research-api.domclick.ru/v5/offers'
+        # OFFERS_ENDPOINT = 'https://bff-search-web.domclick.ru/api/offers/v1'
 
         total_offers_count = await self.get_amount_of_offers(search_parameters)
         iterations = total_offers_count // search_limit + (1 if total_offers_count % search_limit else 0)
@@ -80,7 +83,7 @@ class DomclickClient(HTTP):
             ) for i in range(iterations)
         ]
 
-        print(urls)  # TODO logging debug
+        # print(urls)  # TODO logging debug
 
         return urls
 
@@ -93,6 +96,7 @@ class DomclickClient(HTTP):
         offers = []
         for i, url in enumerate(urls):
             response = await self.req('get', url)
+
             offers.extend(response['result']['items'])
             print(f'{i + 1} / {len(urls)} iterations')  # TODO logging
 
